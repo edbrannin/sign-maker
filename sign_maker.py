@@ -4,13 +4,18 @@ from path import Path
 from reportlab.lib.enums import TA_CENTER
 from reportlab.lib.pagesizes import letter, landscape, inch
 from reportlab.lib.styles import ParagraphStyle
-from reportlab.platypus import Paragraph, SimpleDocTemplate, PageBreak, Spacer
 from reportlab.lib.utils import simpleSplit
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.platypus import Paragraph, SimpleDocTemplate, PageBreak, Spacer
+
 
 OUT_DIR = Path("output")
 
 PAGE_SIZE = landscape(letter)
 DEFAULT_WIDTH, DEFAULT_HEIGHT = PAGE_SIZE
+
+pdfmetrics.registerFont(TTFont('ArchitectsDaughter', 'architect-s-daughter/ArchitectsDaughter.ttf'))
 
 def render_sign_elements(base_name, label, elements):
     try:
@@ -26,7 +31,7 @@ def render_sign_elements(base_name, label, elements):
 
 def sign_elements(labels, size=128):
     title_style = ParagraphStyle("Title",
-            fontName="Helvetica-Bold", fontSize=size, leading=size,
+            fontName="ArchitectsDaughtef", fontSize=size, leading=size,
             alignment=TA_CENTER)
     elements = list()
     for label in labels:
@@ -49,6 +54,8 @@ def get_text_height(lines, width=DEFAULT_WIDTH):
         # simpleSplit calculates how reportlab will break up the lines for
         # display in a paragraph, by using width/fontsize.
         # Default Frame padding is 6px on left & right
+
+        # TODO Drop font size if first line is just one short word
         split = simpleSplit(line.text, line.style.fontName, line.style.fontSize, width - 12)
         answer += len(split) * line.style.leading
     return answer
